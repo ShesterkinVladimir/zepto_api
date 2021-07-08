@@ -9,7 +9,7 @@ class Library(models.Model):
 
 class Author(models.Model):
     name = models.CharField(max_length=128)
-    birth_date = models.DateTimeField()
+    birth_date = models.DateField()
 
 
 class Book(models.Model):
