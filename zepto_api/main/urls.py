@@ -3,8 +3,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("library/", views.LibraryCreateView.as_view(), name="library"),
-    path("library/<int:pk>/", views.LibraryIdUpdateView.as_view(), name="library_pk"),
+    path("library/", views.LibraryCreateView.as_view({'get': 'list', 'post': 'create'}), name="library"),
+    path("library/<int:pk>/", views.LibraryCreateView.as_view(
+        {'get': 'retrieve', 'put': 'update', 'patch': 'partial_update'}), name="library_pk"),
     path("library/list/", views.LibraryListUpdateView.as_view(), name="library_list"),
 
     path("author/", views.AuthorCreateView.as_view(), name="author"),

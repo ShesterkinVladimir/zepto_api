@@ -3,31 +3,32 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework import generics
+from rest_framework import viewsets
 
-
+# from rest_framework.decorators import list_route
 from .models import Library, Author, Book
 from .serializers import LibraryListSerializer, AuthorListSerializer, BookListSerializer
 
 
 # Library
-class LibraryCreateView(generics.ListCreateAPIView):
+# @list_route
+class LibraryCreateView(viewsets.ModelViewSet):
     serializer_class = LibraryListSerializer
     queryset = Library.objects.all()
 
     def create(self, request, *args, **kwargs):
-        many = True if isinstance(request.data, list) else False
-
-        serializer = self.get_serializer(data=request.data, many=many)
+        serializer = self.get_serializer(data=request.data, many=isinstance(request.data, list))
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class LibraryIdUpdateView(generics.RetrieveUpdateAPIView):
 
-    serializer_class = LibraryListSerializer
-    queryset = Library.objects.all()
+# class LibraryIdUpdateView(generics.RetrieveUpdateAPIView):
+#
+#     serializer_class = LibraryListSerializer
+#     queryset = Library.objects.all()
 
 
 class LibraryListUpdateView(APIView):  # можно ли уменьшить этот код?
