@@ -38,13 +38,6 @@ class LibraryListUpdateView(APIView):  # можно ли уменьшить эт
         except Library.DoesNotExist:
             raise Http404
 
-    # def post(self, request):
-    #     serializer = LibraryListSerializer(data=request.data, many=True)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     def put(self, request):
         for lib in request.data:
             library = self.get_object(pk=lib['id'])
@@ -65,7 +58,10 @@ class LibraryListUpdateView(APIView):  # можно ли уменьшить эт
             serializer = LibraryListSerializer(library, data=lib, partial=True)
             if not serializer.is_valid():
                 Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            serializer.save()
+            try:
+                serializer.save()
+            except AssertionError:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         library = Library.objects.filter(id__in=[lib['id'] for lib in request.data])
         serializer = LibraryListSerializer(library, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -75,7 +71,6 @@ class LibraryListUpdateView(APIView):  # можно ли уменьшить эт
 class AuthorCreateView(generics.ListCreateAPIView):
 
     serializer_class = AuthorListSerializer
-    # queryset = Author.objects.all()
 
     def get_queryset(self):
         queryset = Author.objects.all()
@@ -108,13 +103,6 @@ class AuthorListUpdateView(APIView):
         except Author.DoesNotExist:
             raise Http404
 
-    # def post(self, request):
-    #     serializer = AuthorListSerializer(data=request.data, many=True)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     def put(self, request):
         for aut in request.data:
             author = self.get_object(pk=aut['id'])
@@ -135,7 +123,10 @@ class AuthorListUpdateView(APIView):
             serializer = AuthorListSerializer(author, data=aut, partial=True)
             if not serializer.is_valid():
                 Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            serializer.save()
+            try:
+                serializer.save()
+            except AssertionError:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         author = Author.objects.filter(id__in=[aut['id'] for aut in request.data])
         serializer = AuthorListSerializer(author, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -163,7 +154,6 @@ class BookIdUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Book.objects.all()
 
 
-
 class BookListUpdateView(APIView):
 
     def get_object(self, pk):
@@ -171,13 +161,6 @@ class BookListUpdateView(APIView):
             return Book.objects.get(pk=pk)
         except Book.DoesNotExist:
             raise Http404
-
-    # def post(self, request):
-    #     serializer = BookListSerializer(data=request.data, many=True)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request):
         for bo in request.data:
@@ -199,10 +182,14 @@ class BookListUpdateView(APIView):
             serializer = BookListSerializer(book, data=bo, partial=True)
             if not serializer.is_valid():
                 Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            serializer.save()
+            try:
+                serializer.save()
+            except AssertionError:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         book = Book.objects.filter(id__in=[bo['id'] for bo in request.data])
         serializer = BookListSerializer(book, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 
