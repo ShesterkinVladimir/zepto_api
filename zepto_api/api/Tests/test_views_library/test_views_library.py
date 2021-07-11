@@ -1,6 +1,6 @@
 import pytest
 
-from main.models import Library
+from api.models import Library
 from django.urls import reverse
 
 

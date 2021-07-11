@@ -16,7 +16,7 @@ class Book(models.Model):
     name = models.CharField(max_length=128)
     year = models.SmallIntegerField(null=True)
     authors = models.ManyToManyField(Author)
-    library = models.ForeignKey(Library, null=True, on_delete=models.SET_NULL, related_name="library_book")
+    library = models.ForeignKey(Library, null=True, on_delete=models.SET_NULL, related_name="books")
 
 
 

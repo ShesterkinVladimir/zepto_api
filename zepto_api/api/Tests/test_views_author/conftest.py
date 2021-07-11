@@ -1,5 +1,5 @@
 import pytest
-from main.models import Author
+from api.models import Author
 from django.urls import reverse
 
 

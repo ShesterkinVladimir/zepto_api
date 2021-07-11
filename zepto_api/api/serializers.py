@@ -11,8 +11,6 @@ class LibraryListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
-
 class AuthorListSerializer(serializers.ModelSerializer):
     """Список Авторов"""
 

@@ -1,5 +1,5 @@
 import pytest
-from main.models import Book
+from api.models import Book
 from django.urls import reverse
 
 
