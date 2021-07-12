@@ -163,3 +163,52 @@ def test_author_patch_multiple(name, birth_date, status_code, api_client,  inser
     response = api_client.patch(url, data=data, format='json')
     assert response.status_code == status_code
 
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    'library1, library2, status_code', [
+        ('bib1', None, 200),
+        ('bib1', 'bib2', 200),
+        (None, 'bib2', 200),
+        (None, None, 200),
+
+    ],
+)
+def test_author_filter(library1, library2, status_code, api_client, insert_author):
+    url = reverse('library')
+    data = [{
+        'address': 'Sovetskaya',
+        'book_capacity': 1000,
+        'name': 'bib1'
+    },
+        {
+            'address': 'Sovetskaya-1',
+            'book_capacity': 10000,
+            'name': 'bib2'
+        }
+    ]
+    library = api_client.post(url, data=data, format='json')
+
+    authors = insert_author
+
+    url = reverse('book')
+    data = [{
+        'name': 'book-1',
+        'year': 2001,
+        'library': library.data[0].get('id'),
+        'authors': [authors.data[0].get('id'), authors.data[1].get('id')]
+    },
+        {
+            'name': 'book-2',
+            'year': 2002,
+            'library': library.data[1].get('id'),
+            'authors': [authors.data[0].get('id'), authors.data[1].get('id')]
+        }
+    ]
+
+    api_client.post(url, data=data, format='json')
+
+    url = reverse('author') + f'?library={library1}%2C+{library2}'
+    response = api_client.get(url)
+    assert response.status_code == 200
+
