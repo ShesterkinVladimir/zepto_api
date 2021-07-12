@@ -4,33 +4,23 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from . import views
 
-library = views.LibraryCreateView.as_view({
+request_list = {
     'get': 'list',
     'post': 'create'
-})
-library_pk = views.LibraryCreateView.as_view({
+}
+request_pk = {
     'get': 'retrieve',
     'put': 'update',
-    'patch': 'partial_update'
-})
-author = views.AuthorCreateView.as_view({
-    'get': 'list',
-    'post': 'create'
-})
-author_pk = views.AuthorCreateView.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update'
-})
-book = views.BookCreateView.as_view({
-    'get': 'list',
-    'post': 'create'
-})
-book_pk = views.BookCreateView.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update'
-})
+    'patch': 'partial_update',
+    'delete': 'destroy'
+}
+library = views.LibraryCreateView.as_view(request_list)
+library_pk = views.LibraryCreateView.as_view(request_pk)
+author = views.AuthorCreateView.as_view(request_list)
+author_pk = views.AuthorCreateView.as_view(request_pk)
+book = views.BookCreateView.as_view(request_list)
+book_pk = views.BookCreateView.as_view(request_pk)
+
 urlpatterns = format_suffix_patterns([
     path("library/", library, name="library"),
     path("library/<int:pk>/", library_pk, name="library_pk"),
@@ -46,7 +36,7 @@ urlpatterns = format_suffix_patterns([
 ])
 
 # router = DefaultRouter()
-# router.register(r'v1/library', views.LibraryCreateView, basename='library')
+# router.register(r'library', views.LibraryCreateView, basename='library')
 # router.register(r'author', views.AuthorCreateView, basename='author')
 # router.register(r'book', views.BookCreateView, basename='book')
 # urlpatterns += router.urls

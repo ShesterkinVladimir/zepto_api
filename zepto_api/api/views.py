@@ -26,7 +26,10 @@ class DataFilter(FilterSet):
 
 class BulkCommonView(viewsets.ModelViewSet):
 
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    def get_permissions(self):
+        if self.request.method in ['DELETE']:
+            return [permissions.IsAdminUser()]
+        return [permissions.AllowAny()]
 
     def get_serializer(self, *args, **kwargs):
         if isinstance(kwargs.get("data", {}), list):
@@ -37,15 +40,15 @@ class BulkCommonView(viewsets.ModelViewSet):
 
 class UpdateList(APIView):
 
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.AllowAny]
 
     def put(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         serializer_class = kwargs.pop('serializer_class')
         model = kwargs.pop('model')
-        for el in request.data:
-            obj = get_object_or_404(model, pk=el.get('id'))
-            serializer = serializer_class(obj, data=el, partial=partial)
+        for data in request.data:
+            obj = get_object_or_404(model, pk=data.get('id'))
+            serializer = serializer_class(obj, data=data, partial=partial)
             serializer.is_valid(raise_exception=True)
             serializer.save()
         obj = model.objects.filter(id__in=[lib.get('id') for lib in request.data])
@@ -81,7 +84,6 @@ class AuthorCreateView(BulkCommonView):
     serializer_class = AuthorListSerializer
     queryset = Author.objects.all()
     filterset_class = DataFilter
-
 
 
 class AuthorListUpdateView(UpdateList):
